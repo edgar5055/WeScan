@@ -248,7 +248,7 @@ final class EditScanViewController: UIViewController {
     imageScannerController.imageScannerDelegate?
       .imageScannerController(
         imageScannerController,
-        didFinishScanningWithResults: results
+        didFinishScanningWithResults: result
       )
   }
 
