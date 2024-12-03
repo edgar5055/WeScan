@@ -241,7 +241,7 @@ final class EditScanViewController: UIViewController {
     finishScan(result: results)
   }
 
-  @objc private func finishScan(result: ImageScannerResults) {
+  private func finishScan(result: ImageScannerResults) {
     guard let imageScannerController =
       navigationController as? ImageScannerController else { return }
 
