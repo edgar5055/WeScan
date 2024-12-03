@@ -30,29 +30,22 @@ final class EditScanViewController: UIViewController {
     return quadView
   }()
 
-  private lazy var nextButton: UIBarButtonItem = {
+  private lazy var doneButton: UIBarButtonItem = {
     let title = NSLocalizedString(
       "wescan.edit.button.next",
       tableName: nil,
       bundle: Bundle(for: EditScanViewController.self),
-      value: "Next",
+      value: "Done",
       comment: "A generic next button"
     )
     let button = UIBarButtonItem(
       title: title,
       style: .plain,
       target: self,
-      action: #selector(pushReviewController)
+      action: #selector(finishScan)
     )
 
-    button.tintColor = UIColor { traitCollection in
-      switch traitCollection.userInterfaceStyle {
-      case .dark:
-        .white
-      default:
-        .systemBlue
-      }
-    }
+    button.tintColor = .black
     return button
   }()
 
@@ -117,7 +110,7 @@ final class EditScanViewController: UIViewController {
       value: "Edit Scan",
       comment: "The title of the EditScanViewController"
     )
-    navigationItem.rightBarButtonItem = nextButton
+    navigationItem.rightBarButtonItem = doneButton
     if let firstVC = navigationController?.viewControllers.first,
        firstVC == self
     {
@@ -250,6 +243,21 @@ final class EditScanViewController: UIViewController {
       reviewViewController,
       animated: true
     )
+  }
+
+  @objc private func finishScan() {
+    guard let imageScannerController =
+      navigationController as? ImageScannerController else { return }
+
+    var newResults = results
+    newResults.croppedScan.rotate(by: rotationAngle)
+    newResults.enhancedScan?.rotate(by: rotationAngle)
+    newResults.doesUserPreferEnhancedScan = isCurrentlyDisplayingEnhancedImage
+    imageScannerController.imageScannerDelegate?
+      .imageScannerController(
+        imageScannerController,
+        didFinishScanningWithResults: newResults
+      )
   }
 
   private func displayQuad() {
