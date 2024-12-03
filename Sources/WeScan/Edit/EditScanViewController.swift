@@ -42,7 +42,7 @@ final class EditScanViewController: UIViewController {
       title: title,
       style: .plain,
       target: self,
-      action: #selector(finishScan)
+      action: #selector(cropImage)
     )
 
     button.tintColor = .black
@@ -188,7 +188,7 @@ final class EditScanViewController: UIViewController {
     }
   }
 
-  @objc func pushReviewController() {
+  @objc func cropImage() {
     guard let quad = quadView.quad,
           let ciImage = CIImage(image: image)
     else {
@@ -238,25 +238,17 @@ final class EditScanViewController: UIViewController {
       enhancedScan: enhancedScan
     )
 
-    let reviewViewController = ReviewViewController(results: results)
-    navigationController?.pushViewController(
-      reviewViewController,
-      animated: true
-    )
+    finishScan(result: results)
   }
 
-  @objc private func finishScan() {
+  @objc private func finishScan(result: ImageScannerResults) {
     guard let imageScannerController =
       navigationController as? ImageScannerController else { return }
 
-    var newResults = results
-    newResults.croppedScan.rotate(by: rotationAngle)
-    newResults.enhancedScan?.rotate(by: rotationAngle)
-    newResults.doesUserPreferEnhancedScan = isCurrentlyDisplayingEnhancedImage
     imageScannerController.imageScannerDelegate?
       .imageScannerController(
         imageScannerController,
-        didFinishScanningWithResults: newResults
+        didFinishScanningWithResults: results
       )
   }
 
